@@ -1,0 +1,31 @@
+# 使用 Miniconda 基础镜像
+FROM continuumio/miniconda3:latest
+
+WORKDIR /app
+
+# 修正环境变量格式（确保 Docker 规范）
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8
+
+# 复制项目所有文件到容器内
+COPY . .
+
+# 配置 Conda 通道（优先清华源 + conda-forge，提升兼容性）
+RUN conda config --set show_channel_urls yes \
+    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge \
+    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main \
+    && conda config --add channels conda-forge \
+    && conda config --set channel_priority flexible \
+    && conda config --set remote_read_timeout_secs 600
+
+# 创建并激活 conda 环境（分步执行，减少内存压力）
+RUN conda env create -n phyreg --file docker/environment.yml
+
+# 激活环境并设置为默认
+RUN echo "conda activate phyreg" >> ~/.bashrc
+ENV PATH /opt/conda/envs/phyreg/bin:$PATH
+
+# 验证核心依赖安装
+RUN python -c "import numpy, pandas, scipy, matplotlib; print('核心依赖安装成功')"
+
+CMD ["/bin/bash"]

@@ -1,0 +1,25 @@
+name: phyreg
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - conda-forge
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+  - defaults
+dependencies:
+  # 1. 核心 Python 和基础包
+  - python=3.9
+  - pip
+  - jupyterlab
+
+  # 2. 保留其他的 Conda 依赖 (torch 已移走)
+  - scikit-learn=1.3.2
+  - pandas=2.1.3
+  - matplotlib=3.8.1
+  - seaborn=0.13.0
+  - openpyxl=3.1.2
+
+  # 3. 将 pysr 和 torch 都放在 pip 列表下安装
+  - pip:
+    - torch==2.0.1
+    - pysr==0.16.8
+    - sympytorch==0.1.4
+    - timeout-decorator==0.5.0
